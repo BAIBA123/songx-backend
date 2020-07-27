@@ -14,7 +14,7 @@ export default function Index(props: LayoutProps) {
     <div className="flex">
       <LeftMenu collapsed={collapsed}></LeftMenu>
       <Header collapsed={collapsed} setCollapsed={setCollapsed}></Header>
-      <div className={`transform duration-300 absolute top-12 bottom-0 right-0 ${collapsed ? 'left-20' : 'left-56'}`}>
+      <div className={`transform duration-300 absolute p-6 top-12 bottom-0 right-0 ${collapsed ? 'left-20' : 'left-56'}`}>
         {children}
       </div>
     </div>
