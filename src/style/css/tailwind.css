@@ -1,6 +1,11 @@
 
 @tailwind base;
 
+
 @tailwind components;
+.base-box {
+  @apply border p-4 rounded shadow-md
+}
+
 
 @tailwind utilities;

@@ -93,7 +93,9 @@
     ]
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "autoprefixer": "^9.8.5",
+    "axios": "^0.19.2",
     "postcss-cli": "^7.1.1",
     "tailwindcss": "^1.5.2"
   },
