@@ -1,22 +1,28 @@
 import React, { useState, useEffect } from "react";
+import http from "../../lib/http";
 import { Table, Form, Input, Button, Modal, message } from "antd";
-import http from '../../lib/http'
 
-const { Column } = Table;
-
-export default function TagList() {
+export default () => {
+  const { Column } = Table;
   const [form] = Form.useForm();
+  const [total, setTotal] = useState(0); // 总页数
+  const [editId, setEditId] = useState('');
   const [visible, setVisible] = useState(false);
-  const [tableData, setTableData] = useState();
-  const [optType, setOptType] = useState('add');
-  const [editId, setEditId] = useState<string>()
+  const [optType, setOptType] = useState("add"); // 编辑 添加
+  const [tableData, setTableData] = useState([]);
 
-  const edit = (record: { name: string, _id: string }) => {
+  const paginationProps = {
+    total: total,
+    showTotal: (total: number) => `共 ${total} 项`,
+    onChange: (pageNo: number) => getTagList(pageNo)
+  };
+
+  const edit = (record: { name: string; _id: string }) => {
     setVisible(true);
-    setOptType('edit')
-    setEditId(record._id)
+    setOptType("edit");
+    setEditId(record._id);
     form.setFieldsValue({
-      name: record.name
+      name: record.name,
     });
   };
 
@@ -27,53 +33,65 @@ export default function TagList() {
       cancelText: "取消",
       centered: true,
       async onOk() {
-        const res: {msg: string} = await http.delete(`tag/${_id}`)
-        message.success(res.msg)
-        getTagList()
+        const res: any = await http.delete(`tag/${_id}`);
+        message.success(res.msg);
+        getTagList();
       },
     });
   };
 
   const add = () => {
     setVisible(true);
-    setOptType('add')
-  }
+    setOptType("add");
+  };
 
   const submit = async () => {
     try {
-      let data = await form.validateFields()
-      optType === 'add' ? await http.post('tag', data) : await http.put(`tag/${editId}`, data)
-      message.success({content: '添加成功！'})
-      setVisible(false)
-      setOptType('add')
-      getTagList()
-      form.resetFields()
+      let data = await form.validateFields();
+      optType === "add" ? await http.post("tag", data) : await http.put(`tag/${editId}`, data);
+      message.success({ content: "添加成功！" });
+      setVisible(false);
+      setOptType("add");
+      getTagList();
+      form.resetFields();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
   const cancel = () => {
-    form.resetFields()
+    form.resetFields();
     setVisible(false);
   };
 
-  const getTagList = async () => {
-    const res = await http.get('tag')
-    setTableData(res)
-  }
+  const getTagList = async (pageNo: number = 1) => {
+    const res: any = await http.get("tag", { params: { pageNo } });
+    setTableData(res.items);
+    setTotal(res.total);
+  };
 
   useEffect(() => {
-    getTagList()
-  }, [])
+    getTagList();
+  }, []);
 
   return (
     <div className="base-box">
       <div className="text-right mb-4">
-        <Button type="primary" onClick={() => add()}>添加</Button>
+        <Button type="primary" onClick={add}>
+          添加
+        </Button>
       </div>
-      <Table dataSource={tableData} bordered rowKey='_id'>
-        <Column title="序号" width="20%" render={(text, record, index) => `${index + 1}`} />
+      <Table
+        dataSource={tableData}
+        bordered
+        rowKey="_id"
+        pagination={paginationProps}
+      >
+        <Column
+          title="序号"
+          width="20%"
+          render={(text, record, index) => `${index + 1}`}
+        />
         <Column title="名称" dataIndex="name" />
         <Column
           title="操作"
@@ -107,8 +125,8 @@ export default function TagList() {
         centered
         title="编辑"
         visible={visible}
-        onOk={() => submit()}
-        onCancel={() => cancel()}
+        onOk={submit}
+        onCancel={cancel}
       >
         <Form name="basic" form={form}>
           <Form.Item

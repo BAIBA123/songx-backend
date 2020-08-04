@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from "react";
+import http from "../../lib/http";
 import { Table, Form, Input, Button, Modal, message } from "antd";
-import http from '../../lib/http'
 
 const { Column } = Table;
 
-export default function MenuList() {
+export default () => {
   const [form] = Form.useForm();
-  const [visible, setVisible] = useState(false);
   const [tableData, setTableData] = useState();
-  const [optType, setOptType] = useState('add');
-  const [editId, setEditId] = useState<string>()
+  const [visible, setVisible] = useState(false);
+  const [optType, setOptType] = useState("add");
+  const [editId, setEditId] = useState<string>();
 
-  const edit = (record: { name: string, link: string, _id: string }) => {
+  const edit = (record: { name: string; link: string; _id: string }) => {
     setVisible(true);
-    setOptType('edit')
-    setEditId(record._id)
+    setOptType("edit");
+    setEditId(record._id);
     form.setFieldsValue({
       name: record.name,
-      link: record.link
+      link: record.link,
     });
   };
 
@@ -28,53 +28,61 @@ export default function MenuList() {
       cancelText: "取消",
       centered: true,
       async onOk() {
-        const res: {msg: string} = await http.delete(`menu/${_id}`)
-        message.success(res.msg)
-        getMenuList()
+        const res: { msg: string } = await http.delete(`menu/${_id}`);
+        message.success(res.msg);
+        getMenuList();
       },
     });
   };
 
   const add = () => {
     setVisible(true);
-    setOptType('add')
-  }
+    setOptType("add");
+  };
 
   const submit = async () => {
     try {
-      let data = await form.validateFields()
-      optType === 'add' ? await http.post('menu', data) : await http.put(`menu/${editId}`, data)
-      message.success({content: '添加成功！'})
-      setVisible(false)
-      setOptType('add')
-      getMenuList()
-      form.resetFields()
+      let data: any = await form.validateFields();
+      optType === "add"
+        ? await http.post("menu", data)
+        : await http.put(`menu/${editId}`, data);
+      message.success({ content: "添加成功！" });
+      setVisible(false);
+      setOptType("add");
+      getMenuList();
+      form.resetFields();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
   const cancel = () => {
-    form.resetFields()
+    form.resetFields();
     setVisible(false);
   };
 
   const getMenuList = async () => {
-    const res = await http.get('menu')
-    setTableData(res)
-  }
+    const res: any = await http.get("menu");
+    setTableData(res.items);
+  };
 
   useEffect(() => {
-    getMenuList()
-  }, [])
+    getMenuList();
+  }, []);
 
   return (
     <div className="base-box">
       <div className="text-right mb-4">
-        <Button type="primary" onClick={() => add()}>添加</Button>
+        <Button type="primary" onClick={() => add()}>
+          添加
+        </Button>
       </div>
-      <Table dataSource={tableData} bordered rowKey='_id'>
-        <Column title="序号" width="20%" render={(text, record, index) => `${index + 1}`} />
+      <Table dataSource={tableData} bordered rowKey="_id">
+        <Column
+          title="序号"
+          width="20%"
+          render={(text, record, index) => `${index + 1}`}
+        />
         <Column title="名称" dataIndex="name" width="20%" />
         <Column title="链接" dataIndex="link" />
         <Column
@@ -109,8 +117,8 @@ export default function MenuList() {
         centered
         title="编辑"
         visible={visible}
-        onOk={() => submit()}
-        onCancel={() => cancel()}
+        onOk={submit}
+        onCancel={cancel}
       >
         <Form name="basic" form={form}>
           <Form.Item
@@ -132,4 +140,4 @@ export default function MenuList() {
       </Modal>
     </div>
   );
-}
+};

@@ -1,8 +1,7 @@
 import React from 'react'
 import { Breadcrumb } from 'antd';
 
-
-export default function Index () {
+export default () => {
   return (
     <div className="border rounded p-4">
       <Breadcrumb>

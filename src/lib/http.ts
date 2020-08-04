@@ -1,21 +1,21 @@
 import axios from 'axios'
-import {Message} from 'antd'
+import {message} from 'antd'
 
-const http = axios.create({
+const http: any = axios.create({
   timeout: 30000,
   baseURL: 'http://127.0.0.1:9876/backend/rest/'
 })
 
 http.interceptors.response.use(
-  response => {
+  (response: any) => {
     // if (response.data.code !== 0) {
     //   debugger
-    //   Message.error('test')
+    //   message.error('test')
     //   return Promise.reject(response)
     // }
     return Promise.resolve(response.data)
   },
-  error => {
+  (error: any) => {
     if (error.response) {
       switch (error.response.status) {
         case 401:
@@ -34,7 +34,7 @@ http.interceptors.response.use(
           break
       }
     }
-    Message.error('请求失败!')
+    message.error('请求失败!')
     return Promise.reject(error.response)
   }
 )

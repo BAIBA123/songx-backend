@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function AppList () {
+export default () => {
   return (
     <h1>AppList</h1>
   )
