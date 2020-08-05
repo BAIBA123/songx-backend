@@ -7,7 +7,8 @@ import TagList from './pages/setting/TagList'
 import LinkList from './pages/setting/LinkList'
 import MainPic from './pages/setting/Pic'
 
-import PostList from './pages/content/PostList'
+import PostList from './pages/content/post/List'
+import PostAdd from './pages/content/post/Add'
 import AppList from './pages/content/AppList'
 import BookList from './pages/content/BookList'
 import StoreList from './pages/content/StoreList'
@@ -26,7 +27,9 @@ function App() {
 
             <Route exact path="/content/appList" component={AppList} />
             <Route exact path="/content/bookList" component={BookList} />
-            <Route exact path="/content/postList" component={PostList} />
+            <Route exact path="/content/post/list" component={PostList} />
+            <Route exact path="/content/post/add" component={PostAdd} />
+            <Route exact path="/content/post/:id" component={PostAdd} />
             <Route exact path="/content/storeList" component={StoreList} />
 
             <Redirect from="/" to="/index"/>

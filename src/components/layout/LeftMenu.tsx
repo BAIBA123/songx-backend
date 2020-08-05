@@ -39,7 +39,7 @@ export default (props: LeftMenuProps) => {
       </SubMenu>
       <SubMenu key="3" title="内容管理">
         <Menu.Item key="3-1">
-          <Link to="/content/postList">文章列表</Link>
+          <Link to="/content/post/list">文章列表</Link>
         </Menu.Item>
         <Menu.Item key="3-2">
           <Link to="/content/bookList">阅读列表</Link>
