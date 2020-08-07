@@ -3,19 +3,17 @@ import React, { useState, useEffect } from "react";
 import moment from "moment";
 import http from "../../lib/http";
 import NoteList from "./NoteList";
-import { PlusOutlined } from "@ant-design/icons";
-import { Table, Form, Input, Button, Modal, message, DatePicker, Rate, Upload, Select} from "antd";
-
-
+import { Table, Form, Input, Button, Modal, message, DatePicker, Rate, Upload, Select } from "antd";
+import { PlusOutlined, DeleteTwoTone, EditTwoTone, UnorderedListOutlined } from "@ant-design/icons";
 
 interface Book {
   _id: string;
-  name: string;
-  author: string;
   pic: string;
+  name: string;
   star: number;
-  start_date: Date;
+  author: string;
   end_date: Date;
+  start_date: Date;
 }
 
 export default function BookList() {
@@ -32,10 +30,10 @@ export default function BookList() {
   const [editId, setEditId] = useState<string>(); // 编辑id
   const [showNote, setShowNote] = useState(false); // 图片预览弹窗
   const [picVisible, setPicVisible] = useState(false); // 图片预览弹窗
-
+  const [defaultFileList, setDefaultFileList] = useState<any>(); 
   const pageConf = {
     total: total,
-    onChange: (pageNo: number) => getBookList(pageNo)
+    onChange: (pageNo: number) => getBookList(pageNo),
   };
 
   const edit = (record: Book) => {
@@ -43,13 +41,20 @@ export default function BookList() {
     setOptType("edit");
     setEditId(record._id);
     form.setFieldsValue({
+      pic: record.pic,
+      star: record.star,
       name: record.name,
       author: record.author,
-      // pic: record.pic.file.response.url,
-      star: record.star,
-      start_date: moment(record.start_date, "YYYY-MM-DD"),
       end_date: moment(record.end_date, "YYYY-MM-DD"),
+      start_date: moment(record.start_date, "YYYY-MM-DD"),
     });
+    let list = [
+      {
+        uid: record._id,
+        url: record.pic
+      }
+    ]
+    setDefaultFileList(list)
   };
 
   const del = (_id: number) => {
@@ -69,6 +74,7 @@ export default function BookList() {
   const add = () => {
     setVisible(true);
     setOptType("add");
+    setDefaultFileList([])
   };
 
   const submit = async () => {
@@ -154,8 +160,8 @@ export default function BookList() {
             );
           }}
         />
-        <Column title="书名" dataIndex="name" />
-        <Column title="作者" dataIndex="author" />
+        <Column title="书名" dataIndex="name" width="20%" />
+        <Column title="作者" dataIndex="author"  width="20%"  />
         <Column
           title="标签"
           dataIndex="tags"
@@ -177,41 +183,27 @@ export default function BookList() {
           )}
         />
         <Column title="评分" dataIndex="star" width="5%" />
-        {/* <Column title="开始时间" dataIndex="start_date" render={val => {return moment(val).format('YYYY-MM-DD')}}/> */}
-        {/* <Column title="结束时间" dataIndex="end_date" render={val => { return moment(val).format('YYYY-MM-DD') }} /> */}
         <Column
           title="操作"
           key="action"
           width="10%"
           render={(record) => (
-            <>
-              <Button
+            <div className="text-xl">
+              <EditTwoTone 
                 className="cursor-pointer mr-4"
-                size="small"
-                type="primary"
+                twoToneColor="#409EFF" 
                 onClick={() => edit(record)}
-              >
-                编辑
-              </Button>
-              <Button
-                className="cursor-pointer mr-1"
-                size="small"
-                type="primary"
-                danger
-                onClick={() => del(record._id)}
-              >
-                删除
-              </Button>
-              <Button
-                className="cursor-pointer mr-1"
-                size="small"
-                type="primary"
-                danger
+              />
+              <DeleteTwoTone 
+                onClick={() => del(record._id)} 
+                twoToneColor="#F56C6C" 
+                className="mr-4" 
+              />
+              <UnorderedListOutlined
+                className="cursor-pointer"
                 onClick={() => showDrawer(record._id, record.name)}
-              >
-                笔记
-              </Button>
-            </>
+              />
+            </div>
           )}
         />
       </Table>
@@ -224,7 +216,6 @@ export default function BookList() {
         onCancel={cancel}
       >
         <Form
-          name="basic"
           form={form}
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 18 }}
@@ -251,9 +242,10 @@ export default function BookList() {
             rules={[{ required: true, message: "请上传封面" }]}
           >
             <Upload
-              action="http://127.0.0.1:9876/backend/api/uploads"
               listType="picture-card"
+              defaultFileList={defaultFileList}
               onChange={(info) => uploadChange(info)}
+              action="http://127.0.0.1:9876/backend/api/uploads"
             >
               <div>
                 <PlusOutlined />
@@ -267,7 +259,7 @@ export default function BookList() {
             name="tags"
             rules={[{ required: true, message: "请选择标签" }]}
           >
-            <Select allowClear mode="multiple">
+            <Select mode="multiple" allowClear>
               {tagList &&
                 tagList.map((item: { _id: string; name: string }) => {
                   return (
@@ -302,15 +294,12 @@ export default function BookList() {
           >
             <DatePicker />
           </Form.Item>
-
-          <Button type="primary" size="small" onClick={() => setShowNote(true)}>
-            笔记管理
-          </Button>
         </Form>
       </Modal>
 
       {/* 图片预览 */}
       <Modal
+        centered
         title="预览"
         visible={picVisible}
         onCancel={() => setPicVisible(false)}

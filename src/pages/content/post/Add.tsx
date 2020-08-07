@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import E from "wangeditor";
 import moment from "moment";
 import http from "../../../lib/http";
-import { Form, Input, Button, DatePicker, Switch, message } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import { Form, Input, Button, DatePicker, Switch, message, Upload } from "antd";
 
 export default (props: any) => {
   const [form] = Form.useForm();
@@ -13,7 +14,7 @@ export default (props: any) => {
   };
 
   const onFinish = async (value: any) => {
-    await http.post("post", Object.assign(value, { content }));
+    props.match.params.id ? await http.put(`post/${props.match.params.id}`, Object.assign(value, { content })) : await http.post('post', Object.assign(value, { content }))
     message.success("保存成功！");
     props.history.replace("/content/post/list");
   };
@@ -24,23 +25,27 @@ export default (props: any) => {
       setContent(editor.txt.html());
     };
     editor.create(); //创建
+    return editor
   };
 
   const getPost = useCallback(async () => {
     const res: any = await http.get(`post/${props.match.params.id}`);
     form.setFieldsValue({
-      title: res.item.title,
+      name: res.item.name,
       status: res.item.status,
       date: moment(res.item.date, "YYYY-MM-DD"),
     });
+    const editor = initEditor()
+    editor.txt.html(res.item.content)
   }, [form, props.match.params.id]);
 
-  useEffect(() => {
-    initEditor();
-  }, []);
+  const uploadChange = (info: any) => {
+    const { status, response } = info.file;
+    status === "done" && form.setFieldsValue({ pic: response.url });
+  };
 
   useEffect(() => {
-    props.match.params.id && getPost();
+    props.match.params.id ? getPost() : initEditor();
   }, [getPost, props.match.params.id]);
 
   return (
@@ -52,7 +57,7 @@ export default (props: any) => {
         onFinish={onFinish}
       >
         <Form.Item
-          name="title"
+          name="name"
           label="标题"
           rules={[{ required: true, message: "标题必填" }]}
         >
@@ -62,6 +67,20 @@ export default (props: any) => {
         <Form.Item label="内容">
           <div id="editor"></div>
         </Form.Item>
+
+        <Form.Item
+            name="pic"
+            label="封面"
+            rules={[{ required: true, message: "请上传封面" }]}
+          >
+            <Upload
+              listType="picture-card"
+              action="http://127.0.0.1:9876/backend/api/uploads"
+              onChange={(info) => uploadChange(info)}
+            >
+              <PlusOutlined />
+            </Upload>
+          </Form.Item>
 
         <Form.Item label="关键词"></Form.Item>
 

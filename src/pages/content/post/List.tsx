@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
+
+import moment from "moment";
 import http from "../../../lib/http";
 import { Link } from "react-router-dom";
 import { Table, Button, message, Modal } from "antd";
+import { CheckCircleTwoTone, PauseCircleTwoTone, DeleteTwoTone, EditTwoTone } from '@ant-design/icons';
+
 
 export default () => {
   const [tableData, setTableData] = useState([]);
@@ -14,33 +18,34 @@ export default () => {
     },
     {
       title: "标题",
-      dataIndex: "title",
-      key: "title",
+      dataIndex: "name",
+      key: "name",
       width: "40%",
     },
     {
       title: "日期",
       dataIndex: "date",
       key: "date",
+      render: (text: any, record: any, index: number) => moment(record.date).format('YYYY-MM-DD')
     },
     {
       title: "状态",
       dataIndex: "status",
       key: "status",
-      render: (text: any, record: any, index: number) =>
-        `${record.status ? "已发布" : "暂存"}`,
+      render: (text: any, record: any, index: number) => 
+        record.status ? <CheckCircleTwoTone className="text-xl" twoToneColor="#52c41a" /> : <PauseCircleTwoTone className="text-xl" twoToneColor="#E6A23C"/>
     },
     {
-      title: "状态",
+      title: "操作",
       dataIndex: "opts",
       key: "opts",
       render: (text: any, record: any) => (
-        <>
-          <span onClick={() => del(record._id)}>删除 {record.name}</span>
+        <div className="text-xl">
+          <DeleteTwoTone onClick={() => del(record._id)} twoToneColor="#F56C6C" className="mr-4" />
           <Link to={`/content/post/${record._id}`}>
-            <span>编辑</span>
+            <EditTwoTone twoToneColor="#409EFF" />
           </Link>
-        </>
+        </div>
       ),
     },
   ];
@@ -59,7 +64,6 @@ export default () => {
       },
     });
   };
-  const edit = () => {};
 
   const getPostList = async () => {
     const res: any = await http.get("post");
@@ -79,7 +83,7 @@ export default () => {
           </Button>
         </Link>
       </div>
-      <Table dataSource={tableData} columns={columns} />;
+      <Table dataSource={tableData} columns={columns} rowKey="_id" />
     </div>
   );
 };

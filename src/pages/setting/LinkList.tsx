@@ -17,6 +17,7 @@ export default () => {
   const [optType, setOptType] = useState("add");
   const [visible, setVisible] = useState(false);
   const [tableData, setTableData] = useState([]);
+  const [defaultFileList, setDefaultFileList] = useState<any>();
 
   const edit = (record: ILink) => {
     setVisible(true);
@@ -27,6 +28,14 @@ export default () => {
       pic: record.pic,
       link: record.link,
     });
+    let list = [
+      {
+        uid: record._id,
+        status: 'done',
+        url: record.pic,
+      }
+    ]
+    setDefaultFileList(list)
   };
 
   const del = (_id: number) => {
@@ -46,6 +55,7 @@ export default () => {
   const add = () => {
     setVisible(true);
     setOptType("add");
+    setDefaultFileList([])
   };
 
   const submit = async () => {
@@ -152,9 +162,10 @@ export default () => {
             rules={[{ required: true, message: "请上传封面" }]}
           >
             <Upload
-              action="http://127.0.0.1:9876/backend/api/uploads"
               listType="picture-card"
+              defaultFileList={defaultFileList}
               onChange={(info) => uploadChange(info)}
+              action="http://127.0.0.1:9876/backend/api/uploads"
             >
               <div>
                 <PlusOutlined />

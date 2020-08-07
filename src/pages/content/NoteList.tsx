@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Drawer, Button, Modal, Form, DatePicker, Input, message } from "antd";
-import http from "../../lib/http";
+
 import moment from 'moment';
+import http from "../../lib/http";
+import { Drawer, Button, Modal, Form, DatePicker, Input, message } from "antd";
 
 interface NoteProps {
   visible: boolean;
@@ -11,9 +12,9 @@ interface NoteProps {
 
 export default function NoteList(props: NoteProps) {
   const [form] = Form.useForm();
-  const { visible, onClose, bookInfo } = props;
-  const [noteList, setNoteList] = useState([]);
   const [editId, setEditId] = useState('');
+  const [noteList, setNoteList] = useState([]);
+  const { visible, onClose, bookInfo } = props;
   const [modalVisible, setModalVisible] = useState(false);
 
   const titleNode: React.ReactNode = (

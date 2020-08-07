@@ -11,12 +11,13 @@ interface IPic {
 export default () => {
   const { Column } = Table;
   const [form] = Form.useForm();
-  const [editId, setEditId] = useState('');
+  const [editId, setEditId] = useState("");
   const [picSrc, setPicSrc] = useState("");
   const [visible, setVisible] = useState(false);
   const [optType, setOptType] = useState("add");
   const [tableData, setTableData] = useState([]);
   const [picVisible, setPicVisible] = useState(false);
+  const [defaultFileList, setDefaultFileList] = useState<any>();
 
   const edit = (record: IPic) => {
     setVisible(true);
@@ -25,6 +26,14 @@ export default () => {
     form.setFieldsValue({
       pic: record.pic,
     });
+    let list = [
+      {
+        uid: record._id,
+        status: 'done',
+        url: record.pic,
+      }
+    ];
+    setDefaultFileList([...list])
   };
 
   const del = (_id: number) => {
@@ -153,14 +162,12 @@ export default () => {
             rules={[{ required: true, message: "请上传封面" }]}
           >
             <Upload
+              defaultFileList={defaultFileList}
               action="http://127.0.0.1:9876/backend/api/uploads"
               listType="picture-card"
               onChange={(info) => uploadChange(info)}
             >
-              <div>
-                <PlusOutlined />
-                <div className="ant-upload-text">Upload</div>
-              </div>
+              <PlusOutlined />
             </Upload>
           </Form.Item>
         </Form>
@@ -168,6 +175,8 @@ export default () => {
 
       {/* 图片预览 */}
       <Modal
+        centered
+        width="80%"
         title="预览"
         visible={picVisible}
         onCancel={() => setPicVisible(false)}
