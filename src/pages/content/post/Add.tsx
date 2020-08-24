@@ -8,6 +8,7 @@ import { Form, Input, Button, DatePicker, Switch, message, Upload } from "antd";
 export default (props: any) => {
   const [form] = Form.useForm();
   const [content, setContent] = useState();
+  const [fileList, setFileList] = useState<any>();
 
   const onReset = () => {
     form.resetFields();
@@ -24,6 +25,15 @@ export default (props: any) => {
     editor.customConfig.onchange = () => {
       setContent(editor.txt.html());
     };
+    editor.customConfig.fontsizes = {
+      1: '10px',
+      2: '13px',
+      3: '16px',
+      4: '19px',
+      5: '22px',
+      6: '25px',
+      7: '28px'
+  };
     editor.create(); //创建
     return editor
   };
@@ -35,11 +45,19 @@ export default (props: any) => {
       status: res.item.status,
       date: moment(res.item.date, "YYYY-MM-DD"),
     });
+    let list = [
+      {
+        uid: res.item._id,
+        url: res.item.pic,
+      },
+    ];
+    setFileList(list)
     const editor = initEditor()
     editor.txt.html(res.item.content)
   }, [form, props.match.params.id]);
 
   const uploadChange = (info: any) => {
+    setFileList(info.fileList)
     const { status, response } = info.file;
     status === "done" && form.setFieldsValue({ pic: response.url });
   };
@@ -74,11 +92,12 @@ export default (props: any) => {
             rules={[{ required: true, message: "请上传封面" }]}
           >
             <Upload
+              fileList={fileList}
               listType="picture-card"
-              action="http://127.0.0.1:9876/backend/api/uploads"
               onChange={(info) => uploadChange(info)}
+              action={process.env.REACT_APP_UPLOADS_API}
             >
-              <PlusOutlined />
+              {fileList && fileList.length >= 1 ? null : <PlusOutlined />}
             </Upload>
           </Form.Item>
 

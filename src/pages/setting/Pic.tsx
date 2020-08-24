@@ -16,8 +16,8 @@ export default () => {
   const [visible, setVisible] = useState(false);
   const [optType, setOptType] = useState("add");
   const [tableData, setTableData] = useState([]);
+  const [fileList, setFileList] = useState<any>();
   const [picVisible, setPicVisible] = useState(false);
-  const [defaultFileList, setDefaultFileList] = useState<any>();
 
   const edit = (record: IPic) => {
     setVisible(true);
@@ -33,7 +33,7 @@ export default () => {
         url: record.pic,
       }
     ];
-    setDefaultFileList([...list])
+    setFileList([...list])
   };
 
   const del = (_id: number) => {
@@ -53,6 +53,8 @@ export default () => {
   const add = () => {
     setVisible(true);
     setOptType("add");
+    form.resetFields();
+    setFileList([])
   };
 
   const submit = async () => {
@@ -63,7 +65,6 @@ export default () => {
       setVisible(false);
       setOptType("add");
       getPicList();
-      form.resetFields();
     } catch (error) {
       console.log(error);
     }
@@ -79,8 +80,9 @@ export default () => {
     setTableData(res.items);
   };
 
-  const uploadChange = (info: any) => {
-    const { status, response } = info.file;
+  const uploadChange = ({file, fileList}: any) => {
+    setFileList(fileList)
+    const { status, response } = file;
     status === "done" && form.setFieldsValue({ pic: response.url });
   };
 
@@ -151,23 +153,23 @@ export default () => {
       <Modal
         centered
         title="编辑"
-        visible={visible}
         onOk={submit}
+        visible={visible}
         onCancel={cancel}
       >
-        <Form name="basic" form={form}>
+        <Form form={form}>
           <Form.Item
             label="封面"
             name="pic"
             rules={[{ required: true, message: "请上传封面" }]}
           >
             <Upload
-              defaultFileList={defaultFileList}
-              action="http://127.0.0.1:9876/backend/api/uploads"
+              fileList={fileList}
               listType="picture-card"
-              onChange={(info) => uploadChange(info)}
+              onChange={({file, fileList}) => uploadChange({file, fileList})}
+              action={process.env.REACT_APP_UPLOADS_API}
             >
-              <PlusOutlined />
+              {fileList && fileList.length >= 1 ? null : <PlusOutlined />}
             </Upload>
           </Form.Item>
         </Form>

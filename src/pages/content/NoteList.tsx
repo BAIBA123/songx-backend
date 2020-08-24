@@ -104,16 +104,16 @@ export default function NoteList(props: NoteProps) {
       <Modal
         centered
         title="笔记"
-        visible={modalVisible}
         onOk={okFn}
+        visible={modalVisible}
         onCancel={() => setModalVisible(false)}
       >
         <Form
+          form={form}
           name="noteForm"
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 20 }}
           initialValues={{ remember: true }}
-          form={form}
         >
           <Form.Item
             label="日期"

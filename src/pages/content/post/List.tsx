@@ -50,7 +50,6 @@ export default () => {
     },
   ];
 
-  const add = () => {};
   const del = async (id: string) => {
     Modal.confirm({
       content: "确认删除？",
@@ -78,7 +77,7 @@ export default () => {
     <div className="base-box">
       <div className="text-right mb-4">
         <Link to="/content/post/add">
-          <Button type="primary" onClick={add}>
+          <Button type="primary">
             添加
           </Button>
         </Link>

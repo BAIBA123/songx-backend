@@ -9,6 +9,7 @@ import { PlusOutlined, DeleteTwoTone, EditTwoTone, UnorderedListOutlined } from 
 interface Book {
   _id: string;
   pic: string;
+  tags: [];
   name: string;
   star: number;
   author: string;
@@ -16,7 +17,7 @@ interface Book {
   start_date: Date;
 }
 
-export default function BookList() {
+export default () => {
   const { Column } = Table;
   const { Option } = Select;
   const [form] = Form.useForm();
@@ -29,8 +30,8 @@ export default function BookList() {
   const [tableData, setTableData] = useState([]); // 列表数据
   const [editId, setEditId] = useState<string>(); // 编辑id
   const [showNote, setShowNote] = useState(false); // 图片预览弹窗
+  const [fileList, setFileList] = useState<any>();
   const [picVisible, setPicVisible] = useState(false); // 图片预览弹窗
-  const [defaultFileList, setDefaultFileList] = useState<any>(); 
   const pageConf = {
     total: total,
     onChange: (pageNo: number) => getBookList(pageNo),
@@ -40,9 +41,13 @@ export default function BookList() {
     setVisible(true);
     setOptType("edit");
     setEditId(record._id);
+    let arr = record.tags.map((item: any) => {
+      return item._id;
+    });
     form.setFieldsValue({
       pic: record.pic,
       star: record.star,
+      tags: arr,
       name: record.name,
       author: record.author,
       end_date: moment(record.end_date, "YYYY-MM-DD"),
@@ -51,10 +56,10 @@ export default function BookList() {
     let list = [
       {
         uid: record._id,
-        url: record.pic
-      }
-    ]
-    setDefaultFileList(list)
+        url: record.pic,
+      },
+    ];
+    setFileList(list);
   };
 
   const del = (_id: number) => {
@@ -74,7 +79,7 @@ export default function BookList() {
   const add = () => {
     setVisible(true);
     setOptType("add");
-    setDefaultFileList([])
+    setFileList([]);
   };
 
   const submit = async () => {
@@ -99,6 +104,7 @@ export default function BookList() {
   };
 
   const uploadChange = (info: any) => {
+    setFileList(info.fileList);
     const { status, response } = info.file;
     status === "done" && form.setFieldsValue({ pic: response.url });
   };
@@ -161,7 +167,7 @@ export default function BookList() {
           }}
         />
         <Column title="书名" dataIndex="name" width="20%" />
-        <Column title="作者" dataIndex="author"  width="20%"  />
+        <Column title="作者" dataIndex="author" width="20%" />
         <Column
           title="标签"
           dataIndex="tags"
@@ -189,15 +195,15 @@ export default function BookList() {
           width="10%"
           render={(record) => (
             <div className="text-xl">
-              <EditTwoTone 
-                className="cursor-pointer mr-4"
-                twoToneColor="#409EFF" 
+              <EditTwoTone
+                twoToneColor="#409EFF"
                 onClick={() => edit(record)}
+                className="cursor-pointer mr-4"
               />
-              <DeleteTwoTone 
-                onClick={() => del(record._id)} 
-                twoToneColor="#F56C6C" 
-                className="mr-4" 
+              <DeleteTwoTone
+                className="mr-4"
+                twoToneColor="#F56C6C"
+                onClick={() => del(record._id)}
               />
               <UnorderedListOutlined
                 className="cursor-pointer"
@@ -211,15 +217,11 @@ export default function BookList() {
       <Modal
         centered
         title="编辑"
-        visible={visible}
         onOk={submit}
+        visible={visible}
         onCancel={cancel}
       >
-        <Form
-          form={form}
-          labelCol={{ span: 4 }}
-          wrapperCol={{ span: 18 }}
-        >
+        <Form form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 18 }}>
           <Form.Item
             label="书名"
             name="name"
@@ -242,15 +244,12 @@ export default function BookList() {
             rules={[{ required: true, message: "请上传封面" }]}
           >
             <Upload
+              fileList={fileList}
               listType="picture-card"
-              defaultFileList={defaultFileList}
               onChange={(info) => uploadChange(info)}
-              action="http://127.0.0.1:9876/backend/api/uploads"
+              action={process.env.REACT_APP_UPLOADS_API}
             >
-              <div>
-                <PlusOutlined />
-                <div className="ant-upload-text">Upload</div>
-              </div>
+              {fileList && fileList.length >= 1 ? null : <PlusOutlined />}
             </Upload>
           </Form.Item>
 
@@ -271,12 +270,8 @@ export default function BookList() {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            label="评分"
-            name="star"
-            rules={[{ required: true, message: "选择评分" }]}
-          >
-            <Rate allowHalf defaultValue={3} />
+          <Form.Item label="评分" name="star">
+            <Rate allowHalf />
           </Form.Item>
 
           <Form.Item
@@ -315,4 +310,4 @@ export default function BookList() {
       ></NoteList>
     </div>
   );
-}
+};

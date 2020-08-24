@@ -165,7 +165,7 @@ export default () => {
               listType="picture-card"
               defaultFileList={defaultFileList}
               onChange={(info) => uploadChange(info)}
-              action="http://127.0.0.1:9876/backend/api/uploads"
+              action={process.env.REACT_APP_UPLOADS_API}
             >
               <div>
                 <PlusOutlined />
