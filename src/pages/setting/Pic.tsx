@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import http from "../../lib/http";
 import { PlusOutlined } from "@ant-design/icons";
-import { Table, Form, Button, Modal, message, Upload } from "antd";
+import { Table, Form, Button, Modal, message, Upload, Input } from "antd";
 
 interface IPic {
   _id: string;
   pic: string;
+  title: string;
 }
 
 export default () => {
@@ -25,6 +26,7 @@ export default () => {
     setEditId(record._id);
     form.setFieldsValue({
       pic: record.pic,
+      title: record.title
     });
     let list = [
       {
@@ -122,6 +124,11 @@ export default () => {
             );
           }}
         />
+        <Column 
+          title="标题"
+          key="title"
+          dataIndex="title"
+        />
         <Column
           title="操作"
           key="action"
@@ -171,6 +178,13 @@ export default () => {
             >
               {fileList && fileList.length >= 1 ? null : <PlusOutlined />}
             </Upload>
+          </Form.Item>
+          <Form.Item
+            label="标题"
+            name="title"
+            rules={[{ required: true, message: "请填写标题" }]}
+          >
+            <Input />
           </Form.Item>
         </Form>
       </Modal>
