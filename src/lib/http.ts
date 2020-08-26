@@ -3,7 +3,8 @@ import {message} from 'antd'
 
 const http: any = axios.create({
   timeout: 30000,
-  baseURL: 'http://127.0.0.1:9876/backend/rest/'
+  // baseURL: 'http://127.0.0.1:9876/backend/rest/'
+  baseURL: process.env.REACT_APP_BASE_API
 })
 
 http.interceptors.response.use(

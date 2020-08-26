@@ -73,11 +73,9 @@
     "workbox-webpack-plugin": "4.3.1"
   },
   "scripts": {
-    "start": "npm run watch:css && node scripts/start.js",
-    "build": "npm run build:css && node scripts/build.js",
-    "test": "node scripts/test.js",
-    "build:css": "postcss src/style/css/tailwind.css -o src/style/css/index.css",
-    "watch:css": "postcss src/style/css/tailwind.css -o src/style/css/index.css"
+    "start": "node scripts/start.js",
+    "build": "node scripts/build.js",
+    "test": "node scripts/test.js"
   },
   "eslintConfig": {
     "extends": "react-app"
