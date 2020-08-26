@@ -22,18 +22,22 @@ export default (props: any) => {
 
   const initEditor = () => {
     const editor = new E(document.querySelector("#editor"));
+
+    editor.customConfig.uploadFileName = 'file'
+    editor.customConfig.uploadImgServer = process.env.REACT_APP_UPLOADS_API
+    editor.customConfig.uploadImgHooks = {
+      success: function (xhr: any, editor: any, result: any) {
+        console.log(result)
+      },
+      customInsert: function (insertImg: any, result: any, editor: any) {
+        var url = result.url
+        insertImg(url)
+      }
+    }
+    // 获取富文本内容
     editor.customConfig.onchange = () => {
       setContent(editor.txt.html());
     };
-    editor.customConfig.fontsizes = {
-      1: '10px',
-      2: '13px',
-      3: '16px',
-      4: '19px',
-      5: '22px',
-      6: '25px',
-      7: '28px'
-  };
     editor.create(); //创建
     return editor
   };
