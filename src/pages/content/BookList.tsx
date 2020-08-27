@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 import moment from "moment";
 import http from "../../lib/http";
 import NoteList from "./NoteList";
-import { Table, Form, Input, Button, Modal, message, DatePicker, Rate, Upload, Select } from "antd";
 import { PlusOutlined, DeleteTwoTone, EditTwoTone, UnorderedListOutlined } from "@ant-design/icons";
+import { Table, Form, Input, Button, Modal, message, DatePicker, Rate, Upload, Select, Radio } from "antd";
 
 interface Book {
   _id: string;
@@ -15,16 +15,20 @@ interface Book {
   author: string;
   end_date: Date;
   start_date: Date;
+  status: number;
+  publish: string;
 }
 
 export default () => {
   const { Column } = Table;
   const { Option } = Select;
+  const { TextArea } = Input;
   const [form] = Form.useForm();
   const [total, setTotal] = useState(0); // 总页数
+  const [status, setStatus] = useState(0); // 总页数
   const [picSrc, setPicSrc] = useState(""); // 图片预览弹窗
   const [tagList, setTagList] = useState([]);
-  const [bookInfo, setBookInfo] = useState({}); // 图片预览弹窗
+  const [bookInfo, setBookInfo] = useState({});
   const [optType, setOptType] = useState("add"); // 操作: 编辑 || 添加
   const [visible, setVisible] = useState(false); // 编辑弹窗
   const [tableData, setTableData] = useState([]); // 列表数据
@@ -45,10 +49,11 @@ export default () => {
       return item._id;
     });
     form.setFieldsValue({
+      tags: arr,
       pic: record.pic,
       star: record.star,
-      tags: arr,
       name: record.name,
+      status: record.status,
       author: record.author,
       end_date: moment(record.end_date, "YYYY-MM-DD"),
       start_date: moment(record.start_date, "YYYY-MM-DD"),
@@ -189,6 +194,7 @@ export default () => {
           )}
         />
         <Column title="评分" dataIndex="star" width="5%" />
+        <Column title="状态" dataIndex="status" width="10%" />
         <Column
           title="操作"
           key="action"
@@ -272,6 +278,18 @@ export default () => {
 
           <Form.Item label="评分" name="star">
             <Rate allowHalf />
+          </Form.Item>
+
+          <Form.Item label="状态" name="status" rules={[{ required: true, message: "请选择状态" }]}>
+            <Radio.Group value={status}>
+              <Radio value={0}>已购</Radio>
+              <Radio value={1}>已读</Radio>
+              <Radio value={2}>推荐</Radio>
+            </Radio.Group>
+          </Form.Item>
+
+          <Form.Item label="出版信息" name="publish">
+            <TextArea rows={4} />
           </Form.Item>
 
           <Form.Item
