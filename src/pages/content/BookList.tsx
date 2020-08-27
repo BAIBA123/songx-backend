@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import moment from "moment";
 import http from "../../lib/http";
 import NoteList from "./NoteList";
+import { dict } from '../../conf/dict'
 import { PlusOutlined, DeleteTwoTone, EditTwoTone, UnorderedListOutlined } from "@ant-design/icons";
 import { Table, Form, Input, Button, Modal, message, DatePicker, Rate, Upload, Select, Radio } from "antd";
 
@@ -25,7 +26,7 @@ export default () => {
   const { TextArea } = Input;
   const [form] = Form.useForm();
   const [total, setTotal] = useState(0); // 总页数
-  const [status, setStatus] = useState(0); // 总页数
+  const [status, setStatus] = useState(0);
   const [picSrc, setPicSrc] = useState(""); // 图片预览弹窗
   const [tagList, setTagList] = useState([]);
   const [bookInfo, setBookInfo] = useState({});
@@ -55,8 +56,9 @@ export default () => {
       name: record.name,
       status: record.status,
       author: record.author,
-      end_date: moment(record.end_date, "YYYY-MM-DD"),
-      start_date: moment(record.start_date, "YYYY-MM-DD"),
+      publish: record.publish,
+      end_date: moment(record.end_date),
+      start_date: moment(record.start_date)
     });
     let list = [
       {
@@ -194,7 +196,13 @@ export default () => {
           )}
         />
         <Column title="评分" dataIndex="star" width="5%" />
-        <Column title="状态" dataIndex="status" width="10%" />
+        <Column title="状态" dataIndex="status" width="10%" 
+          render={(record) => (
+            <Button size="small" className={`text-white border-none ${record === 0 ? 'bg-blue-500' : (record === 1 ? 'bg-orange-500' : 'bg-green-500')}`}>
+              {dict.book_status[record]}
+            </Button>
+          )}
+        />
         <Column
           title="操作"
           key="action"
@@ -227,7 +235,7 @@ export default () => {
         visible={visible}
         onCancel={cancel}
       >
-        <Form form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 18 }}>
+        <Form form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 18 }} initialValues={{status, star: 3}}>
           <Form.Item
             label="书名"
             name="name"

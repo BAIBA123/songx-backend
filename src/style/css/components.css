@@ -1,0 +1,7 @@
+.w-e-text-container {
+  height: 600px!important;
+}
+
+.keywords {
+  @apply bg-gray-500 px-2 rounded-full text-white text-xs py-1 mr-1
+}

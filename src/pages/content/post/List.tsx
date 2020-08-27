@@ -20,7 +20,20 @@ export default () => {
       title: "标题",
       dataIndex: "name",
       key: "name",
-      width: "40%",
+    },
+    {
+      title: "关键词",
+      dataIndex: "keywords",
+      key: "keywords",
+      render: (text: any, record: any, index: number) => (
+        <>
+          {
+            text && text.split('=').map((item: any) => {
+              return <span className="keywords">{item}</span>
+            })
+          }
+        </>
+      )
     },
     {
       title: "日期",

@@ -45,7 +45,8 @@ export default (props: any) => {
       pic: res.item.pic,
       name: res.item.name,
       status: res.item.status,
-      date: moment(res.item.date, "YYYY-MM-DD"),
+      keywords: res.item.keywords,
+      date: moment(res.item.date),
     });
     let list = [
       {
@@ -64,6 +65,10 @@ export default (props: any) => {
     status === "done" && form.setFieldsValue({ pic: response.url });
   };
 
+  const getCurrentData = () =>{
+    return new Date().toLocaleDateString();
+  }
+
   useEffect(() => {
     props.match.params.id ? getPost() : initEditor();
   }, [getPost, props.match.params.id]);
@@ -75,6 +80,7 @@ export default (props: any) => {
         labelCol={{ span: 2 }}
         wrapperCol={{ span: 14 }}
         onFinish={onFinish}
+        initialValues={{date: moment(getCurrentData(), 'YYYY-MM-DD')}}
       >
         <Form.Item
           name="name"
@@ -84,9 +90,7 @@ export default (props: any) => {
           <Input />
         </Form.Item>
 
-        <Form.Item label="内容">
-          <div id="editor"></div>
-        </Form.Item>
+        
 
         <Form.Item
             name="pic"
@@ -103,7 +107,9 @@ export default (props: any) => {
             </Upload>
           </Form.Item>
 
-        <Form.Item label="关键词"></Form.Item>
+        <Form.Item label="关键词" name="keywords">
+          <Input className="w-1/2" allowClear />
+        </Form.Item>
 
         <Form.Item
           name="date"
@@ -115,6 +121,10 @@ export default (props: any) => {
 
         <Form.Item name="status" label="上线" valuePropName="checked">
           <Switch />
+        </Form.Item>
+
+        <Form.Item label="内容">
+          <div id="editor"></div>
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 2, span: 14 }}>
