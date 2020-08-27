@@ -10,10 +10,6 @@ export default (props: any) => {
   const [content, setContent] = useState();
   const [fileList, setFileList] = useState<any>();
 
-  const onReset = () => {
-    form.resetFields();
-  };
-
   const onFinish = async (value: any) => {
     props.match.params.id ? await http.put(`post/${props.match.params.id}`, Object.assign(value, { content })) : await http.post('post', Object.assign(value, { content }))
     message.success("保存成功！");
@@ -44,7 +40,9 @@ export default (props: any) => {
 
   const getPost = useCallback(async () => {
     const res: any = await http.get(`post/${props.match.params.id}`);
+    console.log(res.item)
     form.setFieldsValue({
+      pic: res.item.pic,
       name: res.item.name,
       status: res.item.status,
       date: moment(res.item.date, "YYYY-MM-DD"),
@@ -120,7 +118,6 @@ export default (props: any) => {
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 2, span: 14 }}>
-          <Button onClick={onReset}>重置</Button>
           <Button type="primary" htmlType="submit" className="ml-2">
             提交
           </Button>
