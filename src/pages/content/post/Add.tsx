@@ -4,6 +4,7 @@ import moment from "moment";
 import http from "../../../lib/http";
 import { PlusOutlined } from "@ant-design/icons";
 import { Form, Input, Button, DatePicker, Switch, message, Upload } from "antd";
+import {emoji} from '../../../conf/emoji'
 
 export default (props: any) => {
   const [form] = Form.useForm();
@@ -30,6 +31,18 @@ export default (props: any) => {
         insertImg(url)
       }
     }
+    editor.customConfig.emotions = [
+      // {
+      //   title: '默认',
+      //   type: 'image',
+      //   content: emoji
+      // },
+      {
+        title: 'emoji',
+        type: 'emoji',
+        content: ['😀', '😁', '😂', '😃', '😄', '😅', '😐', '😑', '😶', '😮', '😯', '😬']
+      }
+    ]
     // 获取富文本内容
     editor.customConfig.onchange = () => {
       setContent(editor.txt.html());
