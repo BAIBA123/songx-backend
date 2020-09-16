@@ -22,7 +22,7 @@ export default (props: any) => {
 
     editor.customConfig.uploadFileName = 'file'
     editor.customConfig.uploadImgServer = process.env.REACT_APP_UPLOADS_API
-    editor.config.uploadTimeout = 100000000;
+    editor.customConfig.uploadTimeout = 100000000;
     editor.customConfig.uploadImgHooks = {
       success: function (xhr: any, editor: any, result: any) {
         console.log(result)
