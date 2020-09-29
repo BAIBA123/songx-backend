@@ -4,7 +4,7 @@ import moment from "moment";
 import http from "../../../lib/http";
 import { PlusOutlined } from "@ant-design/icons";
 import { Form, Input, Button, DatePicker, Switch, message, Upload } from "antd";
-import {emoji} from '../../../conf/emoji'
+// import {emoji} from '../../../conf/emoji'
 
 export default (props: any) => {
   const [form] = Form.useForm();
