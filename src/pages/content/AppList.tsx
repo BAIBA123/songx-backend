@@ -84,9 +84,7 @@ export default () => {
     form.setFieldsValue({
       pic: record.pic,
       link: record.link,
-      star: record.star,
-      keyword: record.keyword,
-      name: record.name,
+      desc: record.desc,
       start_date: moment(record.start_date, "YYYY-MM-DD"),
     })
     let list = [
